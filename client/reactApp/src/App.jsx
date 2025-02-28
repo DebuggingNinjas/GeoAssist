@@ -1,8 +1,13 @@
+import { Routes, Route } from "react-router-dom";
+import Hero from "./components/Hero";
+
 function App() {
   return (
-    <>
-      <h1>GeoAssist</h1>
-    </>
+    <div>
+      <Routes>
+        <Route path="/" element={<Hero />} />
+      </Routes>
+    </div>
   );
 }
 
