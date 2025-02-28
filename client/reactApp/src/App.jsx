@@ -62,6 +62,21 @@ function App() {
         });
   };
 
+  const getPlaceInfo = async (placeName) => {
+    try {
+        const response = await fetch(`http://localhost:3000/place/${encodeURIComponent(placeName)}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Place Info:", data);
+    } catch (error) {
+        console.error("Error fetching place info:", error);
+    }
+};
+
   return (
     <>
       <div className="title">SDAA</div>

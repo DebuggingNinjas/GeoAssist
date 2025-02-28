@@ -32,8 +32,8 @@ app.get("/employees", async (req, res) => {
       }
 });
 
-app.get("/search", async (req, res) => {
-  const name = req.body.name;
+app.get("/search:name", async (req, res) => {
+  const name = req.params.name;
   try {
     const response = await axios.get(
       'https://maps.googleapis.com/maps/api/place/findplacefromtext/json',
