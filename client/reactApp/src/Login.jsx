@@ -25,19 +25,29 @@ function Login() {
     };
     
     const handleRegister = () => {
-
-        axios.post("http://localhost:5050/register", {username, password})
-        .then(response => {
-            console.log("posted register")
-            if(response.data.message == "User registered successfully!") {
-                setSignedIn(true);
-            }
-            alert(response.data.message);
-        })
-        .catch(err => {
-            console.error(err);
-        });
-    }
+        axios.post("http://localhost:5050/register", { username, password })
+            .then(response => {
+                console.log("Registration successful:", response.data);
+                
+                if (response.data.message === "User registered successfully!") {
+                    setSignedIn(true);
+                }
+                alert(response.data.message);
+            })
+            .catch(err => {
+                if (err.response) {
+                    console.error("Registration error:", err.response.data);
+                    alert(err.response.data.message || "Registration failed. Please try again.");
+                } else if (err.request) {
+                    console.error("No response from server:", err.request);
+                    alert("Server is not responding. Please try again later.");
+                } else {
+                    console.error("Unexpected error:", err.message);
+                    alert("An unexpected error occurred.");
+                }
+            });
+    };
+    
 
     return( 
         <>

@@ -80,7 +80,7 @@ app.post("/create", async (req, res) => {
 
 
 
-app.post("/register", (req, res) => {
+app.post("/register", async (req, res) => {
   const { username, password } = req.body;
   console.log("Received register request:", req.body);
 
@@ -88,57 +88,70 @@ app.post("/register", (req, res) => {
     return res.status(400).json({ message: "Username and password are required." });
   }
 
-  const query = "INSERT INTO accounts (username, password) VALUES (?, ?)";
-  
-  pool.query(query, [username, password], (err, result) => {
-    console.log("Query callback reached"); // Debugging line
+  try {
+    // Check if username already exists
+    const checkQuery = "SELECT * FROM accounts WHERE username = ?";
+    const [existingUsers] = await pool.query(checkQuery, [username]);
 
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ error: err.message });
+    console.log("Existing users found:", existingUsers.length); 
+
+    if (existingUsers.length > 0) {
+      console.log("Username already exists, returning error");
+      return res.status(400).json({ message: "Username already exists. Please choose a different one." });
     }
 
-    console.log("User successfully inserted, sending response"); // Debugging line
-    res.status(201).json({ message: "User registered successfully!" });
-  });
+    // Insert new user
+    const insertQuery = "INSERT INTO accounts (username, password) VALUES (?, ?)";
+    await pool.query(insertQuery, [username, password]);
 
-  console.log("Query execution started, waiting for callback...");
+    console.log("User successfully registered");
+    res.status(201).json({ message: "User registered successfully!" });
+
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 
 
 
-app.post("/login", (req, res) => {
+
+
+
+app.post("/login", async (req, res) => {
   const { username, password } = req.body;
   console.log("Received login request:", req.body);
 
   if (!username || !password) {
-      return res.status(400).json({ message: "Username and password are required." });
+    return res.status(400).json({ message: "Username and password are required." });
   }
 
-  // Check if the user exists
-  const query = "SELECT * FROM accounts WHERE username = ?";
-  pool.query(query, [username], (err, results) => {
-      if (err) {
-          console.error("Database error:", err);
-          return res.status(500).json({ error: err.message });
-      }
+  try {
+    // Check if the user exists
+    const query = "SELECT * FROM accounts WHERE username = ?";
+    const [users] = await pool.query(query, [username]);
 
-      // If user doesn't exist
-      if (results.length === 0) {
-          return res.status(400).json({ message: "Invalid username or password." });
-      }
+    if (users.length === 0) {
+      return res.status(400).json({ message: "Invalid username or password." });
+    }
 
-      // Check if the password matches (You should use hashed passwords in a real application)
-      const user = results[0];
-      if (user.password !== password) {
-          return res.status(400).json({ message: "Invalid username or password." });
-      }
+    const user = users[0];
 
-      console.log("User logged in successfully!");
-      return res.status(200).json({ message: "Login successful!" });
-  });
+    // Compare the plain text passwords (Use hashing in a real-world app)
+    if (user.password !== password) {
+      return res.status(400).json({ message: "Invalid username or password." });
+    }
+
+    console.log("User logged in successfully!");
+    res.status(200).json({ message: "Login successful!" });
+
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
+
 
 
 
