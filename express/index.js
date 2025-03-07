@@ -72,11 +72,73 @@ app.post("/save", async (req, res) => {
 
 app.post("/create", async (req, res) => {
   console.log("Received POST request:", req.body);
-  const query = `INSERT INTo employees VALUES ("${req.body.name}", ${req.body.id}, "${req.body.description}");`;
+  const query = `INSERT INTO employees VALUES ("${req.body.name}", ${req.body.id}, "${req.body.description}");`;
   pool.query(query);
   res.status(200).json({ message: "Data created successfully!"});
 });
 
+
+
+
+app.post("/register", (req, res) => {
+  const { username, password } = req.body;
+  console.log("Received register request:", req.body);
+
+  if (!username || !password) {
+    return res.status(400).json({ message: "Username and password are required." });
+  }
+
+  const query = "INSERT INTO accounts (username, password) VALUES (?, ?)";
+  
+  pool.query(query, [username, password], (err, result) => {
+    console.log("Query callback reached"); // Debugging line
+
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ error: err.message });
+    }
+
+    console.log("User successfully inserted, sending response"); // Debugging line
+    res.status(201).json({ message: "User registered successfully!" });
+  });
+
+  console.log("Query execution started, waiting for callback...");
+});
+
+
+
+
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+  console.log("Received login request:", req.body);
+
+  if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required." });
+  }
+
+  // Check if the user exists
+  const query = "SELECT * FROM accounts WHERE username = ?";
+  pool.query(query, [username], (err, results) => {
+      if (err) {
+          console.error("Database error:", err);
+          return res.status(500).json({ error: err.message });
+      }
+
+      // If user doesn't exist
+      if (results.length === 0) {
+          return res.status(400).json({ message: "Invalid username or password." });
+      }
+
+      // Check if the password matches (You should use hashed passwords in a real application)
+      const user = results[0];
+      if (user.password !== password) {
+          return res.status(400).json({ message: "Invalid username or password." });
+      }
+
+      console.log("User logged in successfully!");
+      return res.status(200).json({ message: "Login successful!" });
+  });
+});
 
 
 

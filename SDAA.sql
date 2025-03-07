@@ -13,3 +13,10 @@ VALUES
 	("Alex", 13345, "I have black hair"),
 	("Jason", 42345, "I like wearing hats"),
 	("Homer", 23775, "I work at a power plant");
+    
+    
+    
+CREATE TABLE accounts (
+username VARCHAR(16) PRIMARY KEY,
+    password VARCHAR(255)
+);
