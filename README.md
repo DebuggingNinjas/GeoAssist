@@ -15,10 +15,11 @@ GeoAssist is a web-based application designed to help users find, manage, and ex
 - **Database**: MySQL (SDAA.sql)
 - **APIs**: Google Maps API (or OpenStreetMap)
 
+# Setup Instructions:
 ## Installation
 ### Prerequisites
-- Node.js & npm
-- MySQL Database
+- Node.js & npm      Install: https://nodejs.org/en/download
+- MySQL Database     Install: https://dev.mysql.com/downloads/mysql/
 
 ### Steps
 1. Clone the repository:
@@ -39,20 +40,29 @@ GeoAssist is a web-based application designed to help users find, manage, and ex
 
 3. Configure environment variables:
    - Create a `.env` file in the `express` directory with database credentials and API keys.
+  
+   - Open the `.env` file in a text editor and add information using the format below:
+   ```sh DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=yourpassword
+   DB_NAME=geoassist
+   API_KEY=your_google_maps_api_key
+   ```
 
-4. Start the backend server:
+
+5. Start the backend server:
    ```sh
    cd express
    npm start
    ```
 
-5. Start the frontend application:
+6. Start the frontend application:
    ```sh
    cd ../client/reactApp
    npm start
    ```
 
-6. Access the app in the browser at `http://localhost:3000`.
+7. Access the app in the browser at the location provided by the front end, e.g. 'http://localhost:5173/'.
 
 ## Database Setup
 1. Import the `SDAA.sql` file into your MySQL database.

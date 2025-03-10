@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Hero from './components/Hero';
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -22,6 +23,7 @@ function Login() {
       })
       .catch(err => {
         console.error("Axios error:", err);
+        alert("Failed to login, please ensure your username and password are correct.")
       });
   };
 
@@ -150,7 +152,7 @@ function Login() {
           </div>
         </div>
       ) : (
-        <div>Logged in!</div>
+        <Hero/>
       )}
     </>
   );
