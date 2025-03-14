@@ -1,4 +1,6 @@
 import Logo from "../assets/GeoAssist.svg";
+import React from "react";
+
 // prob need to add react-router-dom for routing
 
 function Navbar() {

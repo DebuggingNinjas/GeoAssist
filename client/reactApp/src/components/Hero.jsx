@@ -1,12 +1,73 @@
+import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import InputBar from "./InputBar";
 import Filters from "./Filters";
 import Card from "./Card";
 import Footer from "./Footer";
+import { useAuth } from "../contexts/authContext";
+import { useNavigate } from "react-router-dom";
+
+const GOOGLE_API_KEY = "AIzaSyAwQTkVetyS2nlgLm--hbeLy8V1QA_Veo4";
+const PLACES_ENDPOINT = "https://places.googleapis.com/v1/places:searchText";
 
 function Hero() {
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate("/signup");
+    }
+  }, [currentUser, navigate]);
+
+  // State for search functionality
+  const [query, setQuery] = useState("");
+  const [places, setPlaces] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+
+  const fetchPlaces = async () => {
+    if (!query.trim()) return; // avoid empty search
+    setLoading(true);
+    setSearchError(null);
+    try {
+      const response = await fetch(PLACES_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": GOOGLE_API_KEY,
+          "X-Goog-FieldMask":
+            "places.displayName,places.formattedAddress,places.priceLevel,places.id,places.photos,places.rating",
+        },
+        body: JSON.stringify({ textQuery: "Tourism locations in " + query }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch places");
+      }
+      const data = await response.json();
+      console.log("API Response:", data);
+      // Log the photo object for the first place, if available
+      if (data.places && data.places[0] && data.places[0].photos) {
+        console.log("First photo object:", data.places[0].photos[0]);
+      }
+      setPlaces(data.places || []);
+    } catch (err) {
+      console.error("Error fetching places:", err);
+      setSearchError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
+      <div className="text-center py-0">
+        {currentUser && (
+          <p className="text-xs pt-2 text-gray-500">
+            Logged in as {currentUser.email}
+          </p>
+        )}
+      </div>
       <Navbar />
 
       <div className="text-5xl font-semibold font-outfit text-center">
@@ -17,34 +78,76 @@ function Hero() {
         Explore handpicked destinations around the world
       </div>
 
-      <div className="flex justify-center pb-10">
-        <InputBar iconSize="text-md" width="w-full" />
-      </div>
-
-      <div className="flex justify-center py-5">
+      <div className="flex justify-center flex-col pb-10 items-center">
+        <InputBar
+          iconSize="text-md"
+          width="w-4/5"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              fetchPlaces();
+            }
+          }}
+        />
         <Filters />
       </div>
 
-      <div className="grid grid-cols-3 gap-4 w-4/5 mx-auto pb-20">
-        <Card
-          title="Toronto, ON"
-          price="$2,500"
-          rating={4.5}
-          image="https://images.unsplash.com/photo-1507992781348-310259076fe0?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        />
-        <Card
-          title="Toronto, ON"
-          price="$2,500"
-          rating={4.1}
-          image="https://images.unsplash.com/photo-1507992781348-310259076fe0?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        />
-        <Card
-          title="Toronto, ON"
-          price="$2,500"
-          rating={4.3}
-          image="https://images.unsplash.com/photo-1507992781348-310259076fe0?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        />
-      </div>
+      {/* Display search status or results */}
+      {loading && <div className="text-center">Loading places...</div>}
+      {searchError && (
+        <div className="text-center text-red-500">{searchError}</div>
+      )}
+      {places.length > 0 ? (
+        <div className="grid grid-cols-3 gap-2 w-4/5 mx-auto pb-20">
+          {places.map((place) => {
+            if (place.photos && place.photos.length > 0) {
+              console.log(
+                "Photo object for place",
+                place.id,
+                ":",
+                place.photos[0].name
+              );
+            }
+            return (
+              <Card
+                key={place.id}
+                title={place.displayName?.text}
+                price={place.formattedAddress || "N/A"} // Display location instead of price
+                rating={place.rating}
+                image={
+                  place.photos && place.photos.length > 0
+                    ? `https://places.googleapis.com/v1/${place.photos[0].name}/media?key=${GOOGLE_API_KEY}&maxWidthPx=1000`
+                    : "https://via.placeholder.com/400"
+                }
+              />
+            );
+          })}
+        </div>
+      ) : (
+        // If no search results, show the static cards
+        <div className="grid grid-cols-3 gap-4 w-4/5 mx-auto pb-20">
+          <Card
+            title="Toronto, ON"
+            price="$2,500"
+            rating={4.5}
+            image="https://images.unsplash.com/photo-1507992781348-310259076fe0?q=80&w=2940&auto=format&fit=crop"
+          />
+          <Card
+            title="Toronto, ON"
+            price="$2,500"
+            rating={4.1}
+            image="https://images.unsplash.com/photo-1507992781348-310259076fe0?q=80&w=2940&auto=format&fit=crop"
+          />
+          <Card
+            title="Toronto, ON"
+            price="$2,500"
+            rating={4.3}
+            image="https://images.unsplash.com/photo-1507992781348-310259076fe0?q=80&w=2940&auto=format&fit=crop"
+          />
+        </div>
+      )}
 
       <div className="w-full py-5">
         <div className="text-5xl pb-2 font-semibold font-outfit text-center">
@@ -57,13 +160,11 @@ function Hero() {
           <span className="pl-3 text-gray-400">
             <i className="fas fa-envelope"></i>
           </span>
-
           <input
             type="email"
             placeholder="Enter your email"
             className="flex-grow px-4 py-2 text-gray-700 placeholder-gray-400 focus:outline-none"
           />
-
           <button className="bg-blue-500 text-white px-4 py-2 hover:bg-blue-600 transition-colors">
             Subscribe
           </button>

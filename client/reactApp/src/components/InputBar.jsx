@@ -4,6 +4,9 @@ function InputBar({
   Icon = "fas fa-search",
   placeholder = "Search for destinations or activities...",
   width = "w-full",
+  value,
+  onChange,
+  onKeyDown,
 }) {
   return (
     <div
@@ -15,6 +18,9 @@ function InputBar({
       <input
         type="text"
         placeholder={placeholder}
+        value={value} // pass down the value
+        onChange={onChange} // pass down the onChange handler
+        onKeyDown={onKeyDown} // pass down the onKeyDown handler
         className="w-full py-2 focus:outline-none"
       />
     </div>
