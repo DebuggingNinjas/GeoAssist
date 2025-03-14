@@ -10,7 +10,8 @@ function Card({ title, price, image, rating }) {
           alt={title}
           className="w-full h-48 object-cover"
           onError={(e) => {
-            console.error("Error loading image for", title);
+            // console.error("Error loading image for", title);
+            // console.error(e);
             e.target.src =
               "https://images.unsplash.com/photo-1507992781348-310259076fe0?q=80&w=2940&auto=format&fit=crop"; // fallback image
           }}
