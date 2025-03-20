@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getAnalytics, isSupported } from "firebase/analytics";
+import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -16,6 +17,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
 
 // Only initialize Analytics if not in a test environment and if a window object is available
 if (process.env.NODE_ENV !== "test" && typeof window !== "undefined") {
@@ -32,5 +35,5 @@ if (process.env.NODE_ENV !== "test" && typeof window !== "undefined") {
 
 const auth = getAuth(app);
 
-export { auth };
+export { auth, db };
 export default app;

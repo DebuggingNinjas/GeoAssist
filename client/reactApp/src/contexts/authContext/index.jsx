@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
   async function initializeUser(user) {
     if (user) {
       // Define admin emails
-      const adminEmails = ["geoassitadmin@gmail.com"];
+      const adminEmails = ["geoassitadmin@gmail.com", "shamsharoon7@gmail.com"];
       // Create a new user object with the isAdmin property
       const updatedUser = {
         ...user,
