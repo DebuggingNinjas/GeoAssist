@@ -22,7 +22,14 @@ export function AuthProvider({ children }) {
 
   async function initializeUser(user) {
     if (user) {
-      setCurrentUser({ ...user });
+      // Define admin emails
+      const adminEmails = ["geoassitadmin@gmail.com"];
+      // Create a new user object with the isAdmin property
+      const updatedUser = {
+        ...user,
+        isAdmin: adminEmails.includes(user.email),
+      };
+      setCurrentUser(updatedUser);
       setUserLoggedIn(true);
     } else {
       setCurrentUser(null);
