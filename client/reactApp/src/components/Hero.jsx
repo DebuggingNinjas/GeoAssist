@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Navbar from "./Navbar";
 import InputBar from "./InputBar";
 import Filters from "./Filters";
@@ -26,6 +26,8 @@ function Hero() {
   const [loading, setLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
 
+  const [selectedFilter, setSelectedFilter] = useState("All");
+
   const fetchPlaces = async () => {
     if (!query.trim()) return; // avoid empty search
     setLoading(true);
@@ -37,7 +39,7 @@ function Hero() {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": GOOGLE_API_KEY,
           "X-Goog-FieldMask":
-            "places.displayName,places.formattedAddress,places.priceLevel,places.id,places.photos,places.rating",
+            "places.displayName,places.formattedAddress,places.priceLevel,places.id,places.photos,places.rating,places.reviews,places.userRatingCount",
         },
         body: JSON.stringify({ textQuery: "Tourism locations in " + query }),
       });
@@ -58,6 +60,27 @@ function Hero() {
       setLoading(false);
     }
   };
+
+  const sortedPlaces = useMemo(() => {
+    switch (selectedFilter) {
+      case "Popular":
+        // Sort by highest rating
+        return [...places].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      case "Trending":
+        // Sort by most user reviews
+        return [...places].sort(
+          (a, b) => (b.userRatingCount || 0) - (a.userRatingCount || 0)
+        );
+      case "New":
+        // Sort by newest opened date (or use any field representing recency)
+        return [...places].sort(
+          (a, b) => new Date(b.openedDate) - new Date(a.openedDate)
+        );
+      case "All":
+      default:
+        return places;
+    }
+  }, [places, selectedFilter]);
 
   return (
     <>
@@ -91,7 +114,10 @@ function Hero() {
             }
           }}
         />
-        <Filters />
+        <Filters
+          selectedFilter={selectedFilter}
+          onFilterChange={setSelectedFilter}
+        />
       </div>
 
       {/* Display search status or results */}
@@ -101,14 +127,15 @@ function Hero() {
       )}
       {places.length > 0 ? (
         <div className="grid grid-cols-3 gap-2 w-4/5 mx-auto pb-20">
-          {places.map((place) => {
+          {sortedPlaces.map((place) => {
             if (place.photos && place.photos.length > 0) {
-              console.log(
-                "Photo object for place",
-                place.id,
-                ":",
-                place.photos[0].name
-              );
+              // console.log(
+              //   "Photo object for place",
+              //   place.id,
+              //   ":",
+              //   place.photos[0].name
+              // );
+              // console.log(places[0].userRatingCount);
             }
             return (
               <Card
