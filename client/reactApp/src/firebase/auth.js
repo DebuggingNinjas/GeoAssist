@@ -25,9 +25,7 @@ export const doSignInWithEmailAndPassword = async (email, password) => {
 
 export const doSignInWithGoogle = async () => {
   const provider = new GoogleAuthProvider();
-  const result = await signInWithPopup(auth, provider); // ✅ This was missing
-
-  // result.user can be used to store user details in Firestore if needed
+  const result = await signInWithPopup(auth, provider);
 
   return result;
 };
