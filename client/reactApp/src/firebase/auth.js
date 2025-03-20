@@ -7,11 +7,16 @@ import {
   sendPasswordResetEmail,
   updatePassword,
   sendEmailVerification,
+  signInAnonymously,
 } from "firebase/auth";
 import { auth } from "./firebase.js";
 
 export const doCreateUserWithEmailAndPassword = async (email, password) => {
   return createUserWithEmailAndPassword(auth, email, password);
+};
+
+export const doSignInAnonymously = async () => {
+  return signInAnonymously(auth);
 };
 
 export const doSignInWithEmailAndPassword = async (email, password) => {
