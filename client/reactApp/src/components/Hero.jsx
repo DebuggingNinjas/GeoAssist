@@ -21,7 +21,7 @@ function Hero() {
   }, [currentUser, navigate]);
 
   // State for search functionality
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState("Toronto");
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
@@ -60,6 +60,10 @@ function Hero() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchPlaces();
+  }, []);
 
   const sortedPlaces = useMemo(() => {
     switch (selectedFilter) {
