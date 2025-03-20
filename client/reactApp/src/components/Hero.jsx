@@ -95,7 +95,7 @@ function Hero() {
           </p>
         )}
       </div>
-      <Navbar />
+      <Navbar currentUser={currentUser} />
 
       <div className="text-5xl font-semibold font-outfit text-center">
         Discover Your Next Adventure
