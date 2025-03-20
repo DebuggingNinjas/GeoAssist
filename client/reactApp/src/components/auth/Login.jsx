@@ -2,9 +2,11 @@ import { React, useState } from "react";
 import {
   doSignInWithEmailAndPassword,
   doSignInWithGoogle,
+  doSignInAnonymously,
 } from "../../firebase/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/authContext/index";
 
@@ -48,6 +50,25 @@ const Login = () => {
         console.log(`Email: ${user.email}`);
         console.log(`Phone Number: ${user.phoneNumber}`);
         setError("/");
+        navigate("/");
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsSigningIn(false);
+      }
+    }
+  };
+
+  const onAnonymouslySignIn = async () => {
+    if (!isSigningIn) {
+      setIsSigningIn(true);
+      try {
+        const userCredential = await doSignInAnonymously();
+        const user = userCredential.user;
+        console.log(`Welcome ${user.displayName}`);
+        console.log(`Email: ${user.email}`);
+        console.log(`Phone Number: ${user.phoneNumber}`);
+        setError("");
         navigate("/");
       } catch (error) {
         setError(error.message);
@@ -115,10 +136,16 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-2">
+        <div className="flex gap-4">
           <button
+            className="w-full bg-blue-600 mt-2 text-white hover:cursor-pointer py-2 rounded-lg hover:bg-blue-700 transition"
+            onClick={onAnonymouslySignIn}
+          >
+            <FontAwesomeIcon icon={faUser} />
+          </button>
+          <button
+            className="w-full bg-blue-600 mt-2 text-white hover:cursor-pointer py-2 rounded-lg hover:bg-blue-700 transition"
             onClick={onGoogleSignIn}
-            className="w-full bg-blue-600 text-white hover:cursor-pointer py-2 rounded-lg hover:bg-blue-700 transition"
           >
             <FontAwesomeIcon icon={faGoogle} />
           </button>

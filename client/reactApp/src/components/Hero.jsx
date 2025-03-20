@@ -87,7 +87,7 @@ function Hero() {
       <div className="text-center py-0">
         {currentUser && (
           <p className="text-xs pt-2 text-gray-500">
-            Logged in as {currentUser.email}
+            Logged in as {currentUser.email || "Guest"}
           </p>
         )}
       </div>
