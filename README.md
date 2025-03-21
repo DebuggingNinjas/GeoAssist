@@ -30,10 +30,7 @@ GeoAssist is a web-based application designed to help users find, manage, and ex
 
 2. Install dependencies:
    ```sh
-   cd express
-   npm install
-   ```
-   ```sh
+  
    cd ../client/reactApp
    npm install
    ```
