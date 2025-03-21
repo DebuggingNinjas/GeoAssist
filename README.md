@@ -12,7 +12,7 @@ GeoAssist is a web-based application designed to help users find, manage, and ex
 ## Tech Stack
 - **Frontend**: React.js (client/reactApp)
 - **Backend**: Express.js (express)
-- **Database**: MySQL (SDAA.sql)
+- **Database**: MySQL (SDAA.sql) and google database
 - **APIs**: Google Maps API (or OpenStreetMap)
 
 # Setup Instructions:
@@ -50,16 +50,20 @@ GeoAssist is a web-based application designed to help users find, manage, and ex
    ```
 
 
-5. Start the backend server:
+5. Start the backend server/build the app:
    ```sh
-   cd express
-   npm start
+   cd client/reactAPP
+   npm run build
+
+   For unit testing
+   npm run test
    ```
 
 6. Start the frontend application:
    ```sh
    cd ../client/reactApp
-   npm start
+   npm i
+   npm run dev
    ```
 
 7. Access the app in the browser at the location provided by the front end, e.g. 'http://localhost:5173/'.
