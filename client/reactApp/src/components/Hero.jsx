@@ -6,6 +6,8 @@ import Card from "./Card";
 import Footer from "./Footer";
 import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../firebase/firebase";
 
 const GOOGLE_API_KEY = "AIzaSyAwQTkVetyS2nlgLm--hbeLy8V1QA_Veo4";
 const PLACES_ENDPOINT = "https://places.googleapis.com/v1/places:searchText";
@@ -21,17 +23,46 @@ function Hero() {
   }, [currentUser, navigate]);
 
   // State for search functionality
-  const [query, setQuery] = useState("Toronto");
+  const [searchQuery, setSearchQuery] = useState("Toronto");
   const [places, setPlaces] = useState([]);
+  const [firestorePlaces, setFirestorePlaces] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
 
   const [selectedFilter, setSelectedFilter] = useState("All");
 
+  // Fetch places from both Google API and Firestore
   const fetchPlaces = async () => {
-    if (!query.trim()) return; // avoid empty search
+    if (!searchQuery.trim()) return; // avoid empty search
     setLoading(true);
     setSearchError(null);
+
+    try {
+      // Fetch from Google Places API
+      const googlePlacesPromise = fetchGooglePlaces(searchQuery);
+
+      // Fetch from Firestore
+      const firestorePlacesPromise = fetchFirestorePlaces(searchQuery);
+
+      // Wait for both requests to complete
+      const [googlePlaces, dbPlaces] = await Promise.all([
+        googlePlacesPromise,
+        firestorePlacesPromise,
+      ]);
+
+      // Set the state with both results
+      setPlaces(googlePlaces);
+      setFirestorePlaces(dbPlaces);
+    } catch (err) {
+      console.error("Error fetching places:", err);
+      setSearchError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to fetch places from Google Places API
+  const fetchGooglePlaces = async (query) => {
     try {
       const response = await fetch(PLACES_ENDPOINT, {
         method: "POST",
@@ -43,21 +74,56 @@ function Hero() {
         },
         body: JSON.stringify({ textQuery: "Tourism locations in " + query }),
       });
+
       if (!response.ok) {
-        throw new Error("Failed to fetch places");
+        throw new Error("Failed to fetch places from Google API");
       }
+
       const data = await response.json();
-      console.log("API Response:", data);
-      // Log the photo object for the first place, if available
-      if (data.places && data.places[0] && data.places[0].photos) {
-        console.log("First photo object:", data.places[0].photos[0]);
-      }
-      setPlaces(data.places || []);
+      console.log("Google API Response:", data);
+      return data.places || [];
     } catch (err) {
-      console.error("Error fetching places:", err);
-      setSearchError(err.message);
-    } finally {
-      setLoading(false);
+      console.error("Error fetching from Google Places API:", err);
+      return [];
+    }
+  };
+
+  // Function to fetch places from Firestore based on search query
+  const fetchFirestorePlaces = async (searchQuery) => {
+    try {
+      const locationsRef = collection(db, "locations");
+      const locationsSnapshot = await getDocs(locationsRef);
+
+      // Get all locations from Firestore
+      const allLocations = locationsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        isFirestore: true, // Mark as Firestore location for rendering differently
+      }));
+
+      // Filter locations based on search query
+      // Check if city, province, country, or name contains the search query
+      const searchLower = searchQuery.toLowerCase();
+      const filteredLocations = allLocations.filter((location) => {
+        return (
+          (location.city &&
+            location.city.toLowerCase().includes(searchLower)) ||
+          (location.province &&
+            location.province.toLowerCase().includes(searchLower)) ||
+          (location.country &&
+            location.country.toLowerCase().includes(searchLower)) ||
+          (location.name &&
+            location.name.toLowerCase().includes(searchLower)) ||
+          (location.address &&
+            location.address.toLowerCase().includes(searchLower))
+        );
+      });
+
+      console.log("Firestore locations found:", filteredLocations.length);
+      return filteredLocations;
+    } catch (err) {
+      console.error("Error fetching from Firestore:", err);
+      return [];
     }
   };
 
@@ -65,26 +131,39 @@ function Hero() {
     fetchPlaces();
   }, []);
 
-  const sortedPlaces = useMemo(() => {
+  // Combine and sort places from both sources
+  const combinedPlaces = useMemo(() => {
+    const combined = [...firestorePlaces, ...places];
+
     switch (selectedFilter) {
       case "Popular":
         // Sort by highest rating
-        return [...places].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        return combined.sort((a, b) => (b.rating || 0) - (a.rating || 0));
       case "Trending":
         // Sort by most user reviews
-        return [...places].sort(
-          (a, b) => (b.userRatingCount || 0) - (a.userRatingCount || 0)
-        );
+        return combined.sort((a, b) => {
+          // For Firestore locations, use reviews.length
+          // For Google locations, use userRatingCount
+          const aCount = a.isFirestore
+            ? a.reviews?.length || 0
+            : a.userRatingCount || 0;
+          const bCount = b.isFirestore
+            ? b.reviews?.length || 0
+            : b.userRatingCount || 0;
+          return bCount - aCount;
+        });
       case "New":
-        // Sort by newest opened date (or use any field representing recency)
-        return [...places].sort(
-          (a, b) => new Date(b.openedDate) - new Date(a.openedDate)
-        );
+        // Sort with Firestore locations first (as they're our custom data)
+        return combined.sort((a, b) => {
+          if (a.isFirestore && !b.isFirestore) return -1;
+          if (!a.isFirestore && b.isFirestore) return 1;
+          return 0;
+        });
       case "All":
       default:
-        return places;
+        return combined;
     }
-  }, [places, selectedFilter]);
+  }, [places, firestorePlaces, selectedFilter]);
 
   return (
     <>
@@ -109,8 +188,8 @@ function Hero() {
         <InputBar
           iconSize="text-md"
           width="w-4/5"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
@@ -129,31 +208,41 @@ function Hero() {
       {searchError && (
         <div className="text-center text-red-500">{searchError}</div>
       )}
-      {places.length > 0 ? (
+      {combinedPlaces.length > 0 ? (
         <div className="grid grid-cols-3 gap-2 w-4/5 mx-auto pb-20">
-          {sortedPlaces.map((place) => {
-            if (place.photos && place.photos.length > 0) {
-              // console.log(
-              //   "Photo object for place",
-              //   place.id,
-              //   ":",
-              //   place.photos[0].name
-              // );
-              // console.log(places[0].userRatingCount);
+          {combinedPlaces.map((place) => {
+            // Different rendering logic for Firestore vs Google Places
+            if (place.isFirestore) {
+              // Render Firestore location
+              return (
+                <Card
+                  key={`firestore-${place.id}`}
+                  title={place.name || "Unnamed Location"}
+                  price={`${place.address || ""}`}
+                  rating={place.rating}
+                  image={
+                    place.image ||
+                    "https://via.placeholder.com/400?text=No+Image"
+                  }
+                  details={place.details}
+                />
+              );
+            } else {
+              // Render Google Places API location
+              return (
+                <Card
+                  key={`google-${place.id}`}
+                  title={place.displayName?.text}
+                  price={place.formattedAddress || "N/A"}
+                  rating={place.rating}
+                  image={
+                    place.photos && place.photos.length > 0
+                      ? `https://places.googleapis.com/v1/${place.photos[0].name}/media?key=${GOOGLE_API_KEY}&maxWidthPx=1000`
+                      : "https://via.placeholder.com/400"
+                  }
+                />
+              );
             }
-            return (
-              <Card
-                key={place.id}
-                title={place.displayName?.text}
-                price={place.formattedAddress || "N/A"} // Display location instead of price
-                rating={place.rating}
-                image={
-                  place.photos && place.photos.length > 0
-                    ? `https://places.googleapis.com/v1/${place.photos[0].name}/media?key=${GOOGLE_API_KEY}&maxWidthPx=1000`
-                    : "https://via.placeholder.com/400"
-                }
-              />
-            );
           })}
         </div>
       ) : (
