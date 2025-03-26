@@ -33,6 +33,9 @@ function Admin() {
     details: "",
     rating: 0,
     reviews: [],
+    city: "",
+    province: "",
+    country: "",
   });
 
   // State for editing an existing location
@@ -44,6 +47,9 @@ function Admin() {
     details: "",
     rating: 0,
     reviews: [],
+    city: "",
+    province: "",
+    country: "",
   });
 
   // State for review management
@@ -100,6 +106,9 @@ function Admin() {
         details: "",
         rating: 0,
         reviews: [],
+        city: "",
+        province: "",
+        country: "",
       });
       setError(null);
     } catch (err) {
@@ -149,6 +158,9 @@ function Admin() {
         details: "",
         rating: 0,
         reviews: [],
+        city: "",
+        province: "",
+        country: "",
       });
       setError(null);
     } catch (err) {
@@ -232,6 +244,9 @@ function Admin() {
                     <tr>
                       <th className="py-3 px-4">Name</th>
                       <th className="py-3 px-4">Address</th>
+                      <th className="py-3 px-4">City</th>
+                      <th className="py-3 px-4">Province</th>
+                      <th className="py-3 px-4">Country</th>
                       <th className="py-3 px-4">Image</th>
                       <th className="py-3 px-4">Details</th>
                       <th className="py-3 px-4">Rating</th>
@@ -276,6 +291,57 @@ function Admin() {
                             />
                           ) : (
                             location.address
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          {editLocationId === location.id ? (
+                            <input
+                              type="text"
+                              value={editLocationData.city || ""}
+                              onChange={(e) =>
+                                setEditLocationData({
+                                  ...editLocationData,
+                                  city: e.target.value,
+                                })
+                              }
+                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
+                            />
+                          ) : (
+                            location.city || "Not specified"
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          {editLocationId === location.id ? (
+                            <input
+                              type="text"
+                              value={editLocationData.province || ""}
+                              onChange={(e) =>
+                                setEditLocationData({
+                                  ...editLocationData,
+                                  province: e.target.value,
+                                })
+                              }
+                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
+                            />
+                          ) : (
+                            location.province || "Not specified"
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          {editLocationId === location.id ? (
+                            <input
+                              type="text"
+                              value={editLocationData.country || ""}
+                              onChange={(e) =>
+                                setEditLocationData({
+                                  ...editLocationData,
+                                  country: e.target.value,
+                                })
+                              }
+                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
+                            />
+                          ) : (
+                            location.country || "Not specified"
                           )}
                         </td>
                         <td className="py-3 px-4">
@@ -494,6 +560,41 @@ function Admin() {
                       setNewLocation({
                         ...newLocation,
                         details: e.target.value,
+                      })
+                    }
+                    className="border p-2 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-200"
+                  />
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2 mb-2">
+                  <input
+                    type="text"
+                    placeholder="City"
+                    value={newLocation.city}
+                    onChange={(e) =>
+                      setNewLocation({ ...newLocation, city: e.target.value })
+                    }
+                    className="border p-2 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-200"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Province"
+                    value={newLocation.province}
+                    onChange={(e) =>
+                      setNewLocation({
+                        ...newLocation,
+                        province: e.target.value,
+                      })
+                    }
+                    className="border p-2 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-200"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Country"
+                    value={newLocation.country}
+                    onChange={(e) =>
+                      setNewLocation({
+                        ...newLocation,
+                        country: e.target.value,
                       })
                     }
                     className="border p-2 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-200"
