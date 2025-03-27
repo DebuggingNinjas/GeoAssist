@@ -232,8 +232,8 @@ function Hero() {
                   city={place.city}
                   province={place.province}
                   country={place.country}
-                  // make sure to add this to admin panel
-                  website={place.websiteUri}
+                  // Fix these properties - Changed from websiteUri to website
+                  website={place.website} // Changed from websiteUri
                   googleMapsURI={place.googleMapsURI}
                   openingHours={place.openingHours}
                 />

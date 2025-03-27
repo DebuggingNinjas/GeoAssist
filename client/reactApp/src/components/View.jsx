@@ -230,7 +230,7 @@ function View() {
               </a>
             )}
 
-            {website && (
+            {googleMapsURI && ( // Changed condition from website to googleMapsURI
               <a
                 href={googleMapsURI}
                 target="_blank"
