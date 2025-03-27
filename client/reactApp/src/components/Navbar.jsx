@@ -23,7 +23,7 @@ function Navbar({ currentUser }) {
           </li>
         )}
         <li
-          className="font-outfit px-4 py-2 bg-blue-600 hover:cursor-pointer text-white rounded-3xl"
+          className="font-outfit px-4 py-2 bg-blue-600 cursor-pointer text-white rounded-3xl"
           onClick={doSignOut}
         >
           Log Out

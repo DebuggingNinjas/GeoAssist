@@ -43,7 +43,7 @@ function Card({
   };
 
   return (
-    <div className="max-w-xs rounded-2xl shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:-translate-y-2">
+    <div className="max-w-xs rounded-2xl shadow-md overflow-hidden transition-transform duration-300 hover:-translate-y-2">
       <div className="relative">
         <img
           src={image}
@@ -77,7 +77,7 @@ function Card({
           </p>
         </div>
         <button
-          className="flex-shrink-0 h-9 w-9 flex items-center justify-center font-outfit bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
+          className="flex-shrink-0 h-9 w-9 cursor-pointer flex items-center justify-center font-outfit bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
           onClick={handleViewDetails}
           title="View Details"
         >

@@ -234,8 +234,8 @@ function Hero() {
                   country={place.country}
                   // make sure to add this to admin panel
                   website={place.websiteUri}
-                  googleMapsURI={place.googleMapsUri}
-                  openingHours={place.regularOpeningHours}
+                  googleMapsURI={place.googleMapsURI}
+                  openingHours={place.openingHours}
                 />
               );
             } else {

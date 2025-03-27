@@ -36,6 +36,9 @@ function Admin() {
     city: "",
     province: "",
     country: "",
+    website: "",
+    googleMapsURI: "",
+    openingHours: Array(7).fill(""),
   });
 
   // State for editing an existing location
@@ -50,6 +53,9 @@ function Admin() {
     city: "",
     province: "",
     country: "",
+    website: "",
+    googleMapsURI: "",
+    openingHours: Array(7).fill(""),
   });
 
   // State for review management
@@ -109,6 +115,9 @@ function Admin() {
         city: "",
         province: "",
         country: "",
+        website: "",
+        googleMapsURI: "",
+        openingHours: Array(7).fill(""),
       });
       setError(null);
     } catch (err) {
@@ -161,6 +170,9 @@ function Admin() {
         city: "",
         province: "",
         country: "",
+        website: "",
+        googleMapsURI: "",
+        openingHours: Array(7).fill(""),
       });
       setError(null);
     } catch (err) {
@@ -247,6 +259,8 @@ function Admin() {
                       <th className="py-3 px-4">City</th>
                       <th className="py-3 px-4">Province</th>
                       <th className="py-3 px-4">Country</th>
+                      <th className="py-3 px-4">Website</th> {/* New */}
+                      <th className="py-3 px-4">Maps URL</th> {/* New */}
                       <th className="py-3 px-4">Image</th>
                       <th className="py-3 px-4">Details</th>
                       <th className="py-3 px-4">Rating</th>
@@ -342,6 +356,62 @@ function Admin() {
                             />
                           ) : (
                             location.country || "Not specified"
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          {editLocationId === location.id ? (
+                            <input
+                              type="text"
+                              value={editLocationData.website || ""}
+                              onChange={(e) =>
+                                setEditLocationData({
+                                  ...editLocationData,
+                                  website: e.target.value,
+                                })
+                              }
+                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
+                            />
+                          ) : (
+                            <a
+                              href={location.website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={
+                                location.website
+                                  ? "text-blue-500 hover:underline"
+                                  : "text-gray-400"
+                              }
+                            >
+                              {location.website ? "Visit Site" : "No website"}
+                            </a>
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          {editLocationId === location.id ? (
+                            <input
+                              type="text"
+                              value={editLocationData.googleMapsURI || ""}
+                              onChange={(e) =>
+                                setEditLocationData({
+                                  ...editLocationData,
+                                  googleMapsURI: e.target.value,
+                                })
+                              }
+                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
+                            />
+                          ) : (
+                            <a
+                              href={location.googleMapsURI}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={
+                                location.googleMapsURI
+                                  ? "text-blue-500 hover:underline"
+                                  : "text-gray-400"
+                              }
+                            >
+                              {location.googleMapsURI ? "View Map" : "No map"}
+                            </a>
                           )}
                         </td>
                         <td className="py-3 px-4">
@@ -446,6 +516,53 @@ function Admin() {
                             </div>
                           )}
                         </td>
+                        {editLocationId === location.id && (
+                          <div className="mt-3 p-3 border rounded bg-gray-50 col-span-full">
+                            <h3 className="text-md font-semibold mb-2">
+                              Edit Opening Hours
+                            </h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                              {[
+                                "Monday",
+                                "Tuesday",
+                                "Wednesday",
+                                "Thursday",
+                                "Friday",
+                                "Saturday",
+                                "Sunday",
+                              ].map((day, index) => (
+                                <div key={day} className="mb-1">
+                                  <label className="text-xs font-medium block mb-1">
+                                    {day}:
+                                  </label>
+                                  <input
+                                    type="text"
+                                    placeholder={`${day}: 9:00 AM - 5:00 PM`}
+                                    value={
+                                      editLocationData.openingHours?.[index] ||
+                                      ""
+                                    }
+                                    onChange={(e) => {
+                                      const updatedHours = [
+                                        ...(editLocationData.openingHours ||
+                                          Array(7).fill("")),
+                                      ];
+                                      updatedHours[index] =
+                                        e.target.value.startsWith(`${day}:`)
+                                          ? e.target.value
+                                          : `${day}: ${e.target.value}`;
+                                      setEditLocationData({
+                                        ...editLocationData,
+                                        openingHours: updatedHours,
+                                      });
+                                    }}
+                                    className="border p-1 text-sm rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-200"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </tr>
                     ))}
                   </tbody>
@@ -599,6 +716,70 @@ function Admin() {
                     }
                     className="border p-2 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-200"
                   />
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2 mb-2">
+                  <input
+                    type="text"
+                    placeholder="Website URL"
+                    value={newLocation.website}
+                    onChange={(e) =>
+                      setNewLocation({
+                        ...newLocation,
+                        website: e.target.value,
+                      })
+                    }
+                    className="border p-2 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-200"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Google Maps URL"
+                    value={newLocation.googleMapsURI}
+                    onChange={(e) =>
+                      setNewLocation({
+                        ...newLocation,
+                        googleMapsURI: e.target.value,
+                      })
+                    }
+                    className="border p-2 rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-200"
+                  />
+                </div>
+                <div className="mt-3 mb-4">
+                  <h3 className="text-md font-semibold mb-2">Opening Hours</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+                    {[
+                      "Monday",
+                      "Tuesday",
+                      "Wednesday",
+                      "Thursday",
+                      "Friday",
+                      "Saturday",
+                      "Sunday",
+                    ].map((day, index) => (
+                      <div key={day} className="mb-1">
+                        <label className="text-sm font-medium block mb-1">
+                          {day}:
+                        </label>
+                        <input
+                          type="text"
+                          placeholder={`${day}: 9:00 AM - 5:00 PM`}
+                          value={newLocation.openingHours[index] || ""}
+                          onChange={(e) => {
+                            const updatedHours = [...newLocation.openingHours];
+                            updatedHours[index] = e.target.value.startsWith(
+                              `${day}:`
+                            )
+                              ? e.target.value
+                              : `${day}: ${e.target.value}`;
+                            setNewLocation({
+                              ...newLocation,
+                              openingHours: updatedHours,
+                            });
+                          }}
+                          className="border p-2 text-sm rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-200"
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 mb-2">
                   <input
