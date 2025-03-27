@@ -3,6 +3,7 @@ import Hero from "./components/Hero";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
 import Admin from "./components/admin/Admin";
+import View from "./components/View";
 import { AuthProvider } from "./contexts/authContext";
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/view" element={<View />} />
       </Routes>
     </AuthProvider>
   );
