@@ -14,7 +14,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/view" element={<View />} />
+        <Route path="/view/:id" element={<View />} />
       </Routes>
     </AuthProvider>
   );

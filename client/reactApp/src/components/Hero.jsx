@@ -70,7 +70,7 @@ function Hero() {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": GOOGLE_API_KEY,
           "X-Goog-FieldMask":
-            "places.displayName,places.formattedAddress,places.priceLevel,places.id,places.photos,places.rating,places.reviews,places.userRatingCount",
+            "places.displayName,places.formattedAddress,places.priceLevel,places.id,places.photos,places.rating,places.reviews,places.userRatingCount,places.googleMapsUri,places.websiteUri,places.regularOpeningHours,places.editorialSummary,places.shortFormattedAddress",
         },
         body: JSON.stringify({ textQuery: "Tourism locations in " + query }),
       });
@@ -81,6 +81,7 @@ function Hero() {
 
       const data = await response.json();
       console.log("Google API Response:", data);
+
       return data.places || [];
     } catch (err) {
       console.error("Error fetching from Google Places API:", err);
@@ -217,14 +218,24 @@ function Hero() {
               return (
                 <Card
                   key={`firestore-${place.id}`}
+                  id={place.id}
                   title={place.name || "Unnamed Location"}
                   price={`${place.address || ""}`}
                   rating={place.rating}
                   image={
                     place.image ||
-                    "https://via.placeholder.com/400?text=No+Image"
+                    "https://images.unsplash.com/photo-1507992781348-310259076fe0?q=80&w=2940&auto=format&fit=crop"
                   }
                   details={place.details}
+                  isFirestore={true}
+                  address={place.address}
+                  city={place.city}
+                  province={place.province}
+                  country={place.country}
+                  // make sure to add this to admin panel
+                  website={place.websiteUri}
+                  googleMapsURI={place.googleMapsUri}
+                  openingHours={place.regularOpeningHours}
                 />
               );
             } else {
@@ -232,13 +243,23 @@ function Hero() {
               return (
                 <Card
                   key={`google-${place.id}`}
+                  id={place.id}
                   title={place.displayName?.text}
-                  price={place.formattedAddress || "N/A"}
+                  price={place.shortFormattedAddress || "N/A"}
                   rating={place.rating}
                   image={
                     place.photos && place.photos.length > 0
                       ? `https://places.googleapis.com/v1/${place.photos[0].name}/media?key=${GOOGLE_API_KEY}&maxWidthPx=1000`
-                      : "https://via.placeholder.com/400"
+                      : "https://images.unsplash.com/photo-1507992781348-310259076fe0?q=80&w=2940&auto=format&fit=crop"
+                  }
+                  isFirestore={false}
+                  details={place.editorialSummary?.text}
+                  website={place.websiteUri}
+                  googleMapsURI={place.googleMapsUri}
+                  openingHours={
+                    place.regularOpeningHours
+                      ? place.regularOpeningHours.weekdayDescriptions
+                      : "Hours Unavailable"
                   }
                 />
               );
@@ -246,26 +267,9 @@ function Hero() {
           })}
         </div>
       ) : (
-        // If no search results, show the static cards
-        <div className="grid grid-cols-3 gap-4 w-4/5 mx-auto pb-20">
-          <Card
-            title="Toronto, ON"
-            price="$2,500"
-            rating={4.5}
-            image="https://images.unsplash.com/photo-1507992781348-310259076fe0?q=80&w=2940&auto=format&fit=crop"
-          />
-          <Card
-            title="Toronto, ON"
-            price="$2,500"
-            rating={4.1}
-            image="https://images.unsplash.com/photo-1507992781348-310259076fe0?q=80&w=2940&auto=format&fit=crop"
-          />
-          <Card
-            title="Toronto, ON"
-            price="$2,500"
-            rating={4.3}
-            image="https://images.unsplash.com/photo-1507992781348-310259076fe0?q=80&w=2940&auto=format&fit=crop"
-          />
+        // Static cards
+        <div className="w-4/5 mx-auto pb-20 text-center font-bold">
+          No Locations Found
         </div>
       )}
 
