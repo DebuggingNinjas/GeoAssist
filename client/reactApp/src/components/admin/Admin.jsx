@@ -97,14 +97,27 @@ function Admin() {
 
   // CREATE (Add a new location)
   const handleAddLocation = async () => {
-    const ratingValue = parseFloat(newLocation.rating);
+    // Round the rating to one decimal place
+    const ratingValue = parseFloat(
+      (Math.round(newLocation.rating * 10) / 10).toFixed(1)
+    );
+
     if (!isValidRating(ratingValue)) {
       setError("Rating must be between 0 and 5.");
       return;
     }
+
     try {
-      const docRef = await addDoc(collection(db, "locations"), newLocation);
-      setLocations([...locations, { id: docRef.id, ...newLocation }]);
+      // Use the rounded rating value in the new location object
+      const locationData = {
+        ...newLocation,
+        rating: ratingValue, // Use the rounded value
+      };
+
+      const docRef = await addDoc(collection(db, "locations"), locationData);
+      setLocations([...locations, { id: docRef.id, ...locationData }]);
+
+      // Reset form
       setNewLocation({
         name: "",
         address: "",
@@ -144,21 +157,36 @@ function Admin() {
 
   // UPDATE (Save changes to an existing location)
   const handleUpdateLocation = async () => {
-    const ratingValue = parseFloat(editLocationData.rating);
+    // Round the rating to one decimal place
+    const ratingValue = parseFloat(
+      (Math.round(editLocationData.rating * 10) / 10).toFixed(1)
+    );
+
     if (!isValidRating(ratingValue)) {
       setError("Rating must be between 0 and 5.");
       return;
     }
+
     try {
+      // Create updated data with the rounded rating
+      const updatedData = {
+        ...editLocationData,
+        rating: ratingValue, // Use the rounded value
+      };
+
       const locationDocRef = doc(db, "locations", editLocationId);
-      await updateDoc(locationDocRef, editLocationData);
+      await updateDoc(locationDocRef, updatedData);
+
+      // Update local state with the rounded rating
       setLocations(
         locations.map((loc) =>
           loc.id === editLocationId
-            ? { ...editLocationData, id: editLocationId }
+            ? { ...updatedData, id: editLocationId }
             : loc
         )
       );
+
+      // Reset form
       setEditLocationId(null);
       setEditLocationData({
         name: "",
