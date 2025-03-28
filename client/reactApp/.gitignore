@@ -9,9 +9,18 @@ lerna-debug.log*
 
 node_modules
 dist
-client/reactApp/coverage
 dist-ssr
 *.local
+
+# Test coverage reports
+coverage/
+coverage
+/coverage
+/coverage/
+client/reactApp/coverage
+client/reactApp/coverage/
+/client/reactApp/coverage/
+/client/reactApp/coverage/**
 
 # Editor directories and files
 .vscode/*
