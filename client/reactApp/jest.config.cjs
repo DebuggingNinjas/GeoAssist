@@ -1,13 +1,20 @@
-// jest.config.cjs
 module.exports = {
   testEnvironment: "jsdom",
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  roots: ["<rootDir>/src"],
   transform: {
-    "^.+\\.[tj]sx?$": "babel-jest",
+    "^.+\\.(js|jsx)$": "babel-jest",
   },
   moduleNameMapper: {
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
-    "\\.(svg)$": "<rootDir>/__mocks__/svgrMock.js",
+    "\\.(jpg|jpeg|png|gif|webp|svg)$":
+      "<rootDir>/src/components/tests/__mocks__/fileMock.js",
   },
-  moduleFileExtensions: ["js", "jsx", "json", "node"],
+  setupFilesAfterEnv: ["<rootDir>/src/components/tests/setup.js"],
+  testPathIgnorePatterns: ["/node_modules/", "/dist/", "/build/"],
+  collectCoverageFrom: [
+    "src/**/*.{js,jsx}",
+    "!src/**/*.test.{js,jsx}",
+    "!**/node_modules/**",
+  ],
+  setupFiles: ["<rootDir>/src/components/tests/testSetup.js"],
 };
