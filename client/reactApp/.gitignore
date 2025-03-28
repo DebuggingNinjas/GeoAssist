@@ -9,7 +9,7 @@ lerna-debug.log*
 
 node_modules
 dist
-coverage
+client/reactApp/coverage
 dist-ssr
 *.local
 
