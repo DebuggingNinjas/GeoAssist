@@ -297,109 +297,20 @@ function Admin() {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {locations.map((location) => (
-                      <tr
-                        key={location.id}
-                        className="hover:bg-gray-50 transition-colors"
-                      >
-                        <td className="py-3 px-4">
-                          {editLocationId === location.id ? (
-                            <input
-                              type="text"
-                              value={editLocationData.name}
-                              onChange={(e) =>
-                                setEditLocationData({
-                                  ...editLocationData,
-                                  name: e.target.value,
-                                })
-                              }
-                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
-                            />
-                          ) : (
-                            location.name
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          {editLocationId === location.id ? (
-                            <input
-                              type="text"
-                              value={editLocationData.address}
-                              onChange={(e) =>
-                                setEditLocationData({
-                                  ...editLocationData,
-                                  address: e.target.value,
-                                })
-                              }
-                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
-                            />
-                          ) : (
-                            location.address
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          {editLocationId === location.id ? (
-                            <input
-                              type="text"
-                              value={editLocationData.city || ""}
-                              onChange={(e) =>
-                                setEditLocationData({
-                                  ...editLocationData,
-                                  city: e.target.value,
-                                })
-                              }
-                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
-                            />
-                          ) : (
-                            location.city || "Not specified"
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          {editLocationId === location.id ? (
-                            <input
-                              type="text"
-                              value={editLocationData.province || ""}
-                              onChange={(e) =>
-                                setEditLocationData({
-                                  ...editLocationData,
-                                  province: e.target.value,
-                                })
-                              }
-                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
-                            />
-                          ) : (
-                            location.province || "Not specified"
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          {editLocationId === location.id ? (
-                            <input
-                              type="text"
-                              value={editLocationData.country || ""}
-                              onChange={(e) =>
-                                setEditLocationData({
-                                  ...editLocationData,
-                                  country: e.target.value,
-                                })
-                              }
-                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
-                            />
-                          ) : (
-                            location.country || "Not specified"
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          {editLocationId === location.id ? (
-                            <input
-                              type="text"
-                              value={editLocationData.website || ""}
-                              onChange={(e) =>
-                                setEditLocationData({
-                                  ...editLocationData,
-                                  website: e.target.value,
-                                })
-                              }
-                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
-                            />
-                          ) : (
+                      <React.Fragment key={location.id}>
+                        <tr className="hover:bg-gray-50 transition-colors">
+                          <td className="py-3 px-4">{location.name}</td>
+                          <td className="py-3 px-4">{location.address}</td>
+                          <td className="py-3 px-4">
+                            {location.city || "Not specified"}
+                          </td>
+                          <td className="py-3 px-4">
+                            {location.province || "Not specified"}
+                          </td>
+                          <td className="py-3 px-4">
+                            {location.country || "Not specified"}
+                          </td>
+                          <td className="py-3 px-4">
                             <a
                               href={location.website}
                               target="_blank"
@@ -412,22 +323,8 @@ function Admin() {
                             >
                               {location.website ? "Visit Site" : "No website"}
                             </a>
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          {editLocationId === location.id ? (
-                            <input
-                              type="text"
-                              value={editLocationData.googleMapsURI || ""}
-                              onChange={(e) =>
-                                setEditLocationData({
-                                  ...editLocationData,
-                                  googleMapsURI: e.target.value,
-                                })
-                              }
-                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
-                            />
-                          ) : (
+                          </td>
+                          <td className="py-3 px-4">
                             <a
                               href={location.googleMapsURI}
                               target="_blank"
@@ -440,86 +337,27 @@ function Admin() {
                             >
                               {location.googleMapsURI ? "View Map" : "No map"}
                             </a>
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          {editLocationId === location.id ? (
-                            <input
-                              type="text"
-                              value={editLocationData.image}
-                              onChange={(e) =>
-                                setEditLocationData({
-                                  ...editLocationData,
-                                  image: e.target.value,
-                                })
-                              }
-                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
-                            />
-                          ) : location.image ? (
-                            <img
-                              src={location.image}
-                              alt={location.name}
-                              className="w-20 rounded"
-                            />
-                          ) : (
-                            "No image"
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          {editLocationId === location.id ? (
-                            <input
-                              type="text"
-                              value={editLocationData.details}
-                              onChange={(e) =>
-                                setEditLocationData({
-                                  ...editLocationData,
-                                  details: e.target.value,
-                                })
-                              }
-                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
-                            />
-                          ) : (
-                            location.details
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          {editLocationId === location.id ? (
-                            <input
-                              type="number"
-                              step="0.1"
-                              min="0"
-                              max="5"
-                              value={editLocationData.rating}
-                              onChange={(e) => {
-                                const val = parseFloat(e.target.value) || 0;
-                                setEditLocationData({
-                                  ...editLocationData,
-                                  rating: val,
-                                });
-                              }}
-                              className="border p-1 w-full rounded focus:outline-none focus:ring-1 focus:ring-blue-200"
-                            />
-                          ) : (
-                            location.rating
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          {editLocationId === location.id ? (
-                            <div className="flex space-x-2">
-                              <button
-                                onClick={handleUpdateLocation}
-                                className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                              >
-                                Save
-                              </button>
-                              <button
-                                onClick={() => setEditLocationId(null)}
-                                className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          ) : (
+                          </td>
+                          <td className="py-3 px-4">
+                            {location.image ? (
+                              <img
+                                src={location.image}
+                                alt={location.name}
+                                className="w-20 rounded"
+                              />
+                            ) : (
+                              "No image"
+                            )}
+                          </td>
+                          <td className="py-3 px-4">
+                            {location.details
+                              ? location.details.length > 50
+                                ? `${location.details.substring(0, 50)}...`
+                                : location.details
+                              : "No details"}
+                          </td>
+                          <td className="py-3 px-4">{location.rating}</td>
+                          <td className="py-3 px-4">
                             <div className="flex space-x-2">
                               <button
                                 onClick={() => handleEditLocation(location)}
@@ -542,56 +380,281 @@ function Admin() {
                                 <FontAwesomeIcon icon={faComments} />
                               </button>
                             </div>
-                          )}
-                        </td>
+                          </td>
+                        </tr>
                         {editLocationId === location.id && (
-                          <div className="mt-3 p-3 border rounded bg-gray-50 col-span-full">
-                            <h3 className="text-md font-semibold mb-2">
-                              Edit Opening Hours
-                            </h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                              {[
-                                "Monday",
-                                "Tuesday",
-                                "Wednesday",
-                                "Thursday",
-                                "Friday",
-                                "Saturday",
-                                "Sunday",
-                              ].map((day, index) => (
-                                <div key={day} className="mb-1">
-                                  <label className="text-xs font-medium block mb-1">
-                                    {day}:
-                                  </label>
-                                  <input
-                                    type="text"
-                                    placeholder={`${day}: 9:00 AM - 5:00 PM`}
-                                    value={
-                                      editLocationData.openingHours?.[index] ||
-                                      ""
-                                    }
-                                    onChange={(e) => {
-                                      const updatedHours = [
-                                        ...(editLocationData.openingHours ||
-                                          Array(7).fill("")),
-                                      ];
-                                      updatedHours[index] =
-                                        e.target.value.startsWith(`${day}:`)
-                                          ? e.target.value
-                                          : `${day}: ${e.target.value}`;
-                                      setEditLocationData({
-                                        ...editLocationData,
-                                        openingHours: updatedHours,
-                                      });
-                                    }}
-                                    className="border p-1 text-sm rounded w-full focus:outline-none focus:ring-1 focus:ring-blue-200"
-                                  />
+                          <tr>
+                            <td colSpan="11" className="py-6">
+                              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h3 className="text-lg font-semibold mb-4 text-blue-600">
+                                  Edit Location
+                                </h3>
+
+                                {/* Main information grid */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                                  {/* Basic details */}
+                                  <div className="space-y-3">
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Name
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={editLocationData.name}
+                                        onChange={(e) =>
+                                          setEditLocationData({
+                                            ...editLocationData,
+                                            name: e.target.value,
+                                          })
+                                        }
+                                        className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Address
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={editLocationData.address}
+                                        onChange={(e) =>
+                                          setEditLocationData({
+                                            ...editLocationData,
+                                            address: e.target.value,
+                                          })
+                                        }
+                                        className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Details
+                                      </label>
+                                      <textarea
+                                        value={editLocationData.details || ""}
+                                        onChange={(e) =>
+                                          setEditLocationData({
+                                            ...editLocationData,
+                                            details: e.target.value,
+                                          })
+                                        }
+                                        rows="3"
+                                        className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                      ></textarea>
+                                    </div>
+                                  </div>
+
+                                  {/* Location details */}
+                                  <div className="space-y-3">
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        City
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={editLocationData.city || ""}
+                                        onChange={(e) =>
+                                          setEditLocationData({
+                                            ...editLocationData,
+                                            city: e.target.value,
+                                          })
+                                        }
+                                        className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Province
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={editLocationData.province || ""}
+                                        onChange={(e) =>
+                                          setEditLocationData({
+                                            ...editLocationData,
+                                            province: e.target.value,
+                                          })
+                                        }
+                                        className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Country
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={editLocationData.country || ""}
+                                        onChange={(e) =>
+                                          setEditLocationData({
+                                            ...editLocationData,
+                                            country: e.target.value,
+                                          })
+                                        }
+                                        className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Rating
+                                      </label>
+                                      <input
+                                        type="number"
+                                        step="0.1"
+                                        min="0"
+                                        max="5"
+                                        value={editLocationData.rating}
+                                        onChange={(e) => {
+                                          const val =
+                                            parseFloat(e.target.value) || 0;
+                                          setEditLocationData({
+                                            ...editLocationData,
+                                            rating: val,
+                                          });
+                                        }}
+                                        className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  {/* URLs and Image */}
+                                  <div className="space-y-3">
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Website URL
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={editLocationData.website || ""}
+                                        onChange={(e) =>
+                                          setEditLocationData({
+                                            ...editLocationData,
+                                            website: e.target.value,
+                                          })
+                                        }
+                                        className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Google Maps URL
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={
+                                          editLocationData.googleMapsURI || ""
+                                        }
+                                        onChange={(e) =>
+                                          setEditLocationData({
+                                            ...editLocationData,
+                                            googleMapsURI: e.target.value,
+                                          })
+                                        }
+                                        className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Image URL
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={editLocationData.image || ""}
+                                        onChange={(e) =>
+                                          setEditLocationData({
+                                            ...editLocationData,
+                                            image: e.target.value,
+                                          })
+                                        }
+                                        className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                      />
+                                      {editLocationData.image && (
+                                        <div className="mt-2">
+                                          <img
+                                            src={editLocationData.image}
+                                            alt={editLocationData.name}
+                                            className="h-24 object-cover rounded border"
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
                                 </div>
-                              ))}
-                            </div>
-                          </div>
+
+                                {/* Opening Hours */}
+                                <div className="mt-6">
+                                  <h4 className="text-md font-semibold mb-3">
+                                    Opening Hours
+                                  </h4>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                                    {[
+                                      "Monday",
+                                      "Tuesday",
+                                      "Wednesday",
+                                      "Thursday",
+                                      "Friday",
+                                      "Saturday",
+                                      "Sunday",
+                                    ].map((day, index) => (
+                                      <div key={day} className="mb-1">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                          {day}
+                                        </label>
+                                        <input
+                                          type="text"
+                                          placeholder={`9:00 AM - 5:00 PM`}
+                                          value={(
+                                            editLocationData.openingHours?.[
+                                              index
+                                            ] || ""
+                                          ).replace(`${day}: `, "")}
+                                          onChange={(e) => {
+                                            const updatedHours = [
+                                              ...(editLocationData.openingHours ||
+                                                Array(7).fill("")),
+                                            ];
+                                            updatedHours[
+                                              index
+                                            ] = `${day}: ${e.target.value}`;
+                                            setEditLocationData({
+                                              ...editLocationData,
+                                              openingHours: updatedHours,
+                                            });
+                                          }}
+                                          className="border p-2 text-sm rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                        />
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Action buttons */}
+                                <div className="mt-6 flex flex-wrap gap-3 justify-end">
+                                  <button
+                                    onClick={() => setEditLocationId(null)}
+                                    className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    onClick={handleUpdateLocation}
+                                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+                                  >
+                                    Save Changes
+                                  </button>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
                         )}
-                      </tr>
+                      </React.Fragment>
                     ))}
                   </tbody>
                 </table>
