@@ -8,6 +8,8 @@ import { useAuth } from "../contexts/authContext";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebase";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
 const GOOGLE_API_KEY = "AIzaSyAwQTkVetyS2nlgLm--hbeLy8V1QA_Veo4";
 const PLACES_ENDPOINT = "https://places.googleapis.com/v1/places:searchText";
@@ -30,6 +32,10 @@ function Hero() {
   const [searchError, setSearchError] = useState(null);
 
   const [selectedFilter, setSelectedFilter] = useState("All");
+
+  const [typeFilters, setTypeFilters] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [showTypeFilters, setShowTypeFilters] = useState(false);
 
   // Fetch places from both Google API and Firestore
   const fetchPlaces = async () => {
@@ -70,7 +76,7 @@ function Hero() {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": GOOGLE_API_KEY,
           "X-Goog-FieldMask":
-            "places.displayName,places.formattedAddress,places.priceLevel,places.id,places.photos,places.rating,places.reviews,places.userRatingCount,places.googleMapsUri,places.websiteUri,places.regularOpeningHours,places.editorialSummary,places.shortFormattedAddress",
+            "places.displayName,places.formattedAddress,places.priceLevel,places.id,places.photos,places.rating,places.reviews,places.userRatingCount,places.googleMapsUri,places.websiteUri,places.regularOpeningHours,places.editorialSummary,places.shortFormattedAddress,places.types",
         },
         body: JSON.stringify({ textQuery: "Tourism locations in " + query }),
       });
@@ -134,8 +140,21 @@ function Hero() {
 
   // Combine and sort places from both sources
   const combinedPlaces = useMemo(() => {
-    const combined = [...firestorePlaces, ...places];
+    let combined = [...firestorePlaces, ...places];
 
+    // First filter by types if any types are selected
+    if (selectedTypes.length > 0) {
+      combined = combined.filter((place) => {
+        // For Google Places API results or Firestore places that might have types
+        if (place.types && Array.isArray(place.types)) {
+          // Return true if place has ANY of the selected types (OR logic)
+          return place.types.some((type) => selectedTypes.includes(type));
+        }
+        return false;
+      });
+    }
+
+    // Then apply other filters
     switch (selectedFilter) {
       case "Popular":
         // Sort by highest rating
@@ -164,7 +183,60 @@ function Hero() {
       default:
         return combined;
     }
-  }, [places, firestorePlaces, selectedFilter]);
+  }, [places, firestorePlaces, selectedFilter, selectedTypes]);
+
+  // Add this useEffect to extract unique types from places
+  useEffect(() => {
+    if (places.length > 0) {
+      // Extract all types from Google Places API results
+      const allTypes = places.flatMap((place) => place.types || []);
+
+      // Get unique types
+      const uniqueTypes = [...new Set(allTypes)];
+
+      // Format and sort the types
+      const formattedTypes = uniqueTypes
+        .map((type) => ({
+          original: type,
+          formatted: formatTypeName(type),
+        }))
+        .sort((a, b) => a.formatted.localeCompare(b.formatted));
+
+      setTypeFilters(formattedTypes);
+    }
+  }, [places]);
+
+  // Add this function to format type names properly
+  const formatTypeName = (type) => {
+    return type
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  // Create a function to toggle type selection
+  const toggleTypeSelection = (type) => {
+    setSelectedTypes((prev) => {
+      if (prev.includes(type)) {
+        // If type is already selected, remove it
+        return prev.filter((t) => t !== type);
+      } else {
+        // If type is not selected, add it
+        return [...prev, type];
+      }
+    });
+  };
+
+  // Update the filter button text to show count of selected types
+  const getFilterButtonText = () => {
+    if (selectedTypes.length === 0) {
+      return "Filter by Type";
+    } else if (selectedTypes.length === 1) {
+      return `${formatTypeName(selectedTypes[0])}`;
+    } else {
+      return `${selectedTypes.length} Types Selected`;
+    }
+  };
 
   return (
     <>
@@ -204,6 +276,72 @@ function Hero() {
         />
       </div>
 
+      {/* Add this after the Filters component */}
+      <div className="relative w-4/5 mx-auto flex justify-end mb-4">
+        <button
+          onClick={() => setShowTypeFilters(!showTypeFilters)}
+          className="flex items-center bg-white border border-gray-300 rounded-md px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+        >
+          <FontAwesomeIcon icon={faFilter} className="mr-2" />
+          {getFilterButtonText()}
+        </button>
+
+        {showTypeFilters && (
+          <div className="absolute top-full right-0 mt-2 bg-white shadow-lg rounded-md border border-gray-200 z-50 max-h-96 overflow-y-auto w-64">
+            <div className="p-2 border-b border-gray-200 bg-gray-50 sticky top-0">
+              <h3 className="font-semibold text-gray-700">
+                Filter by Place Type
+              </h3>
+            </div>
+            <div className="p-2">
+              <button
+                onClick={() => {
+                  setSelectedTypes([]);
+                  // Don't close the dropdown so users can select multiple types
+                }}
+                className={`block w-full text-left px-3 py-2 rounded-md cursor-pointer ${
+                  selectedTypes.length === 0
+                    ? "bg-blue-100 text-blue-700"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                Clear All Filters
+              </button>
+
+              {/* Apply filter button */}
+              <button
+                onClick={() => setShowTypeFilters(false)}
+                className="block w-full text-center px-3 py-2 mt-2 mb-2 bg-blue-500 text-white rounded-md cursor-pointer hover:bg-blue-600"
+              >
+                Apply Filters ({selectedTypes.length} selected)
+              </button>
+
+              <div className="border-t border-gray-200 pt-2">
+                {typeFilters.map((type) => (
+                  <div
+                    key={type.original}
+                    className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
+                      selectedTypes.includes(type.original)
+                        ? "bg-blue-100 text-blue-700"
+                        : "hover:bg-gray-100"
+                    }`}
+                    onClick={() => toggleTypeSelection(type.original)}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedTypes.includes(type.original)}
+                      onChange={() => {}} // Handled by the onClick of the parent div
+                      className="mr-2"
+                    />
+                    <span>{type.formatted}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Display search status or results */}
       {loading && <div className="text-center">Loading places...</div>}
       {searchError && (
@@ -232,10 +370,10 @@ function Hero() {
                   city={place.city}
                   province={place.province}
                   country={place.country}
-                  // Fix these properties - Changed from websiteUri to website
-                  website={place.website} // Changed from websiteUri
+                  website={place.website}
                   googleMapsURI={place.googleMapsURI}
                   openingHours={place.openingHours}
+                  types={place.types || []} // Add this line
                 />
               );
             } else {
@@ -261,6 +399,7 @@ function Hero() {
                       ? place.regularOpeningHours.weekdayDescriptions
                       : "Hours Unavailable"
                   }
+                  types={place.types || []} // Add this line
                 />
               );
             }
