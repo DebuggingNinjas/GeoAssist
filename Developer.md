@@ -176,5 +176,5 @@ test('renders Card with props', () => {
 - `GeoAssist_Main_Page_Figma.png` – Homepage mockup
 - `GeoAssist_Sign_In_Figma.png` – Sign-in screen
 - `GeoAssist_Sign_Up_Figma.png` – Sign-up screen
-- `.mkv video file` – Demo or screen recording (if available)
+- `.mkv video file` – Video Demo
 ---
