@@ -11,12 +11,6 @@ function Navbar({ currentUser }) {
       </div>
 
       <ul className="flex gap-4 justify-center items-center">
-        <li className="font-outfit">
-          <Link to="/">Destinations</Link>
-        </li>
-        <li className="font-outfit">
-          <Link to="/bookings">Bookings</Link>
-        </li>
         {currentUser && currentUser.isAdmin && (
           <li className="font-outfit">
             <Link to="/admin">Admin Panel</Link>
