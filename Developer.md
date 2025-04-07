@@ -126,29 +126,6 @@ VITE_API_URL=http://localhost:5000/api
 
 ---
 
-## 🛠 Setup Instructions
-
-### ✅ Prerequisites
-- Node.js >= 16.x (LTS preferred)
-- Vite (installed via `npm install`)
-- MySQL or compatible RDBMS for `SDAA.sql`
-
-### 🔧 Install & Run (Frontend Only)
-```bash
-cd GeoAssist-master/client/reactApp
-npm install
-npm run dev
-```
-
-### ⚙️ Setup (Database)
-```bash
-mysql -u <username> -p <database_name> < SDAA.sql
-```
-
-> Visit your app at: `http://localhost:5173`
-
----
-
 ## 🧪 Testing
 - Uses **Jest** for unit testing React components
 - Folder structure can include `__tests__/` or `.test.jsx` per component
@@ -162,13 +139,6 @@ test('renders Card with props', () => {
   expect(getByText(/Test/)).toBeInTheDocument();
 });
 ```
-
----
-
-## 📌 Notes
-- Backend code (e.g., Express, FastAPI) is **not included** in this package
-- Consider enabling CORS or proxy middleware in dev if backend is hosted separately
-- If using `localhost` backend, ensure both ports are synced with CORS rules
 
 ---
 
