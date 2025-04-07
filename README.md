@@ -66,6 +66,5 @@ GeoAssist is a web-based application designed to help users find, manage, and ex
 ## Core Features
 - **User Authentication**: Secure registration and login system, with the option to login as guest
 - **Location Management**: Add, edit, and remove locations.
-- **Favorites System**: Save favorite locations for quick access.
 - **Interactive Map**: Display locations using a dynamic map.
 - **Admin Panel**: Manage locations and users with an admin interface.
