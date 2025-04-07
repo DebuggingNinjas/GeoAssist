@@ -2,19 +2,10 @@
 
 GeoAssist is a web-based application designed to help users find, manage, and explore geographic locations with ease. It features a user-friendly interface, a robust backend, and a structured database to support location-based services.
 
-## Features
-- **User Authentication**: Secure registration and login system.
-- **Location Management**: Add, edit, and remove locations.
-- **Favorites System**: Save favorite locations for quick access.
-- **Interactive Map**: Display locations using a dynamic map.
-- **Admin Panel**: Manage locations and users with an admin interface.
-
-## Tech Stack
-- **Frontend**: React.js (client/reactApp)
-- **Backend**: Express.js (express)
-- **Database**: MySQL (SDAA.sql) and google database
-- **APIs**: Google Maps API (or OpenStreetMap)
-
+## Getting Started
+- Refer to `README.md` for setup instructions
+- Refer to `Developer.md` for the file structure and project component layout 
+- Refer to `GeoAssist_User_Manual.pdf` for step by step guides on using the platform
 # Setup Instructions:
 ## Installation
 ### Prerequisites
@@ -72,9 +63,9 @@ GeoAssist is a web-based application designed to help users find, manage, and ex
    ```
 2. Ensure your `.env` file in `express` matches your database configuration.
 
-## Contributing
-1. Fork the repository
-2. Create a new branch (`feature-branch`)
-3. Commit your changes
-4. Push to your fork and create a Pull Request
-
+## Core Features
+- **User Authentication**: Secure registration and login system, with the option to login as guest
+- **Location Management**: Add, edit, and remove locations.
+- **Favorites System**: Save favorite locations for quick access.
+- **Interactive Map**: Display locations using a dynamic map.
+- **Admin Panel**: Manage locations and users with an admin interface.
